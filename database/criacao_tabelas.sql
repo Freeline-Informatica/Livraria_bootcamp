@@ -23,3 +23,14 @@ create table livros (
 	
 );
 
+insert into autores(id_autores, nome_autores)
+value
+	(1, "Brandon Sanderson"),
+	(2, "Sarah J. Mass"),
+	(3, "Robin Hobb");
+
+insert into livros(id_cat, nome_cat) 
+value	
+	(1, "Fantasia"),
+	(2, "Romance"),
+	(3, "Terror");
