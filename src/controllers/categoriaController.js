@@ -18,6 +18,9 @@ const criarCategoria = async (req, res) => {
             categoria: novaCategoria.rows[0] 
         });
     } catch (error) {
+        if (error.code === '23505') {
+            return res.status(400).json({ erro: 'Categoria já existe.' });
+        }
         console.error(error);
         res.status(500).json({ erro: 'Erro interno ao cadastrar a categoria.' });
     }

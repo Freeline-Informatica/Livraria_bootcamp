@@ -101,7 +101,7 @@ const listarLivros = async (req, res) => {
       contador++;
     }
 
-    query += " ORDER BY l.id DESC";
+    query += " ORDER BY l.titulo ASC";
 
     const livros = await pool.query(query, valores);
     res.status(200).json(livros.rows);

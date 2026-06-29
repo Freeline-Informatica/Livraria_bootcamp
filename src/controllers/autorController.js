@@ -18,6 +18,9 @@ const criarAutor = async (req, res) => {
             autor: novoAutor.rows[0] 
         });
     } catch (error) {
+        if (error.code === '23505') {
+            return res.status(400).json({ erro: 'Autor já existe.' });
+        }
         console.error(error);
         res.status(500).json({ erro: 'Erro interno ao cadastrar o autor.' });
     }

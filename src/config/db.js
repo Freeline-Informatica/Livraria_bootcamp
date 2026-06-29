@@ -32,8 +32,8 @@ const startDB = async () => {
                 isbn VARCHAR(50) UNIQUE NOT NULL,
                 preco NUMERIC(10, 2) NOT NULL CHECK (preco > 0),
                 quantidade_estoque INTEGER NOT NULL CHECK (quantidade_estoque >= 0),
-                autor_id INTEGER NOT NULL REFERENCES autores(id),
-                categoria_id INTEGER NOT NULL REFERENCES categorias(id),
+                autor_id INTEGER NOT NULL REFERENCES autores(id) ON DELETE RESTRICT,
+                categoria_id INTEGER NOT NULL REFERENCES categorias(id) ON DELETE RESTRICT,
                 ativo BOOLEAN DEFAULT TRUE,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
