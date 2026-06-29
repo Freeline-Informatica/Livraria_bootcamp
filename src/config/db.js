@@ -10,35 +10,39 @@ const pool = new Pool({
 });
 
 const startDB = async () => {
-    const query = `
-        CREATE TABLE IF NOT EXISTS autores (
-            id SERIAL PRIMARY KEY,
-            nome VARCHAR(255) NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS categorias (
-            id SERIAL PRIMARY KEY,
-            nome VARCHAR(255) NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS livros (
-            id SERIAL PRIMARY KEY,
-            titulo VARCHAR(255) NOT NULL,
-            isbn VARCHAR(50) UNIQUE NOT NULL,
-            preco NUMERIC(10, 2) NOT NULL CHECK (preco > 0),
-            quantidade_estoque INTEGER NOT NULL CHECK (quantidade_estoque >= 0),
-            autor_id INTEGER NOT NULL REFERENCES autores(id),
-            categoria_id INTEGER NOT NULL REFERENCES categorias(id),
-            ativo BOOLEAN DEFAULT TRUE,
-            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `;
     try {
-        await pool.query(query);
-        console.log('Tabelas verificadas/criadas com sucesso!');
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS autores (
+                id SERIAL PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS categorias (
+                id SERIAL PRIMARY KEY,
+                nome VARCHAR(255) NOT NULL
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS livros (
+                id SERIAL PRIMARY KEY,
+                titulo VARCHAR(255) NOT NULL,
+                isbn VARCHAR(50) UNIQUE NOT NULL,
+                preco NUMERIC(10, 2) NOT NULL CHECK (preco > 0),
+                quantidade_estoque INTEGER NOT NULL CHECK (quantidade_estoque >= 0),
+                autor_id INTEGER NOT NULL REFERENCES autores(id),
+                categoria_id INTEGER NOT NULL REFERENCES categorias(id),
+                ativo BOOLEAN DEFAULT TRUE,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        console.log('Tabelas verificadas/criadas com sucesso sequencial!');
     } catch (error) {
-        console.error('Erro ao criar tabelas:', error);
+        console.error('Erro crítico ao criar tabelas no banco:', error);
     }
 };
 
