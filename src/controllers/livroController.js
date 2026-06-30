@@ -114,6 +114,11 @@ const listarLivros = async (req, res) => {
 const atualizarLivro = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({ erro: "Body inválido." });
+    }
+
     const { titulo, isbn, preco, quantidade_estoque, autor_id, categoria_id } =
       req.body;
 
@@ -124,24 +129,49 @@ const atualizarLivro = async (req, res) => {
       !categoria_id ||
       preco === undefined ||
       quantidade_estoque === undefined
-    )
+    ) {
       return res
         .status(400)
         .json({ erro: "Todos os campos são obrigatórios." });
+    }
 
-    if (preco <= 0)
+    if (preco <= 0) {
       return res.status(400).json({ erro: "O preço deve ser maior que zero." });
+    }
 
-    if (quantidade_estoque < 0)
+    if (quantidade_estoque < 0) {
       return res.status(400).json({ erro: "Estoque não pode ser negativo." });
+    }
+
+    const livroExiste = await pool.query("SELECT * FROM livros WHERE id = $1", [
+      id,
+    ]);
+
+    if (livroExiste.rowCount === 0) {
+      return res.status(404).json({ erro: "Livro não encontrado." });
+    }
+
+    const livro = livroExiste.rows[0];
+
+    if (!livro.ativo) {
+      return res
+        .status(403)
+        .json({ erro: "Livro inativo não pode ser editado." });
+    }
 
     const query = `
-            UPDATE livros 
-            SET titulo = $1, isbn = $2, preco = $3, quantidade_estoque = $4, 
-                autor_id = $5, categoria_id = $6, atualizado_em = CURRENT_TIMESTAMP
-            WHERE id = $7 AND ativo = true
-            RETURNING *
-        `;
+      UPDATE livros 
+      SET titulo = $1,
+          isbn = $2,
+          preco = $3,
+          quantidade_estoque = $4,
+          autor_id = $5,
+          categoria_id = $6,
+          atualizado_em = CURRENT_TIMESTAMP
+      WHERE id = $7
+      RETURNING *
+    `;
+
     const valores = [
       titulo,
       isbn,
@@ -154,21 +184,35 @@ const atualizarLivro = async (req, res) => {
 
     const livroAtualizado = await pool.query(query, valores);
 
-    if (livroAtualizado.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ erro: "Livro não encontrado ou inativado." });
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       mensagem: "Livro atualizado com sucesso!",
       livro: livroAtualizado.rows[0],
     });
   } catch (error) {
-    if (error.code === "23505")
+    if (error.code === "23505") {
       return res.status(400).json({ erro: "ISBN já cadastrado." });
+    }
+
     console.error(error);
-    res.status(500).json({ erro: "Erro ao atualizar livro." });
+    return res.status(500).json({ erro: "Erro ao atualizar livro." });
+  }
+};
+
+const excluirLivro = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const query = "DELETE FROM livros WHERE id = $1 RETURNING *";
+    const livroExcluido = await pool.query(query, [id]);
+
+    if (livroExcluido.rowCount === 0) {
+      return res.status(404).json({ erro: "Livro não encontrado." });
+    }
+
+    res.status(200).json({ mensagem: "Livro excluído com sucesso!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ erro: "Erro ao excluir livro." });
   }
 };
 
@@ -183,7 +227,7 @@ const inativarLivro = async (req, res) => {
       return res.status(404).json({ erro: "Livro não encontrado." });
     }
 
-    res.status(200).json({ mensagem: "Livro removido com sucesso!" });
+    res.status(200).json({ mensagem: "Livro inativado com sucesso!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ erro: "Erro ao inativar livro." });
@@ -214,4 +258,5 @@ module.exports = {
   atualizarLivro,
   inativarLivro,
   reativarLivro,
+  excluirLivro,
 };
