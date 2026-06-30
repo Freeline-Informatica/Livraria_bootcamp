@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Livraria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gerenciamento de Livraria</h1>
+
+        <div class="card">
+            <h2 id="form-title">Cadastrar Novo Livro</h2>
+            <form id="livro-form">
+                <input type="hidden" id="livro-id"> <div class="form-group">
+                    <label>Título:</label>
+                    <input type="text" id="titulo" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ISBN:</label>
+                        <input type="text" id="isbn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$):</label>
+                        <input type="number" id="preco" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque:</label>
+                        <input type="number" id="qnt_estque" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Autor:</label>
+                        <select id="autor" required>
+                            <option value="1">Brandon Sanderson</option>
+                            <option value="2">Sarah J. Mass</option>
+                            <option value="3">Robin Hobb</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria:</label>
+                        <select id="categoria" required>
+                            <option value="1">Fantasia</option>
+                            <option value="2">Romance</option>
+                            <option value="3">Terror</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-salvar">Salvar Livro</button>
+                <button type="button" id="btn-cancelar" style="display: none;" onclick="resetarFormulario()">Cancelar Edição</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Livros Cadastrados</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>ISBN</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-livros">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/livros';
+
+        // Carregar livros assim que abrir a página
+        document.addEventListener('DOMContentLoaded', listarLivros);
+
+        // LISTAR LIVROS (GET)
+        async function listarLivros() {
+            try {
+                const res = await fetch(API_URL);
+                const livros = await res.json();
+                const tabela = document.getElementById('tabela-livros');
+                tabela.innerHTML = '';
+
+                livros.forEach(livro => {
+                    tabela.innerHTML += `
+                        <tr>
+                            <td><strong>${livro.titulo}</strong></td>
+                            <td>${livro.isbn}</td>
+                            <td>R$ ${Number(livro.preco).toFixed(2)}</td>
+                            <td>${livro.qnt_estque} un</td>
+                            <td>
+                                <button class="btn-edit" onclick="prepararEdicao(${JSON.stringify(livro).replace(/"/g, '&quot;')})">Editar</button>
+                                <button class="btn-delete" onclick="deletarLivro(${livro.id_livros})">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                alert('Erro ao buscar livros da API.');
+            }
+        }
+
+        // CADASTRAR OU EDITAR (POST / PUT)
+        document.getElementById('livro-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('livro-id').value;
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                isbn: document.getElementById('isbn').value,
+                preco: parseFloat(document.getElementById('preco').value),
+                qnt_estque: parseInt(document.getElementById('qnt_estque').value),
+                autor: parseInt(document.getElementById('autor').value),
+                categoria: parseInt(document.getElementById('categoria').value)
+            };
+
+            const url = id ? `${API_URL}/${id}` : API_URL;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await res.json();
+
+                if (res.ok) {
+                    const msgSucesso = resultado.mensagem || (method === 'POST' ? 'Livro cadastrado com sucesso!' : 'Livro atualizado com sucesso!');
+                    alert(msgSucesso);
+                    resetarFormulario();
+                    listarLivros();
+                } else {
+                    alert(resultado.erro || 'Erro na operação.');
+                }
+            } catch (error) {
+                alert('Erro ao conectar com o servidor.');
+            }
+        });
+
+        // EXCLUIR LIVRO (DELETE)
+        async function deletarLivro(id) {
+            if (!confirm('Deseja realmente excluir este livro?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                const resultado = await res.json();
+                
+                if (res.ok) {
+                    alert(resultado.mensagem);
+                    listarLivros();
+                } else {
+                    alert(resultado.erro);
+                }
+            } catch (error) {
+                alert('Erro ao deletar livro.');
+            }
+        }
+
+        // Preenche o formulário com dados para editar
+        function prepararEdicao(livro) {
+            document.getElementById('form-title').innerText = 'Editar Livro';
+            document.getElementById('livro-id').value = livro.id_livros;
+            document.getElementById('titulo').value = livro.titulo;
+            document.getElementById('isbn').value = livro.isbn;
+            document.getElementById('preco').value = livro.preco;
+            document.getElementById('qnt_estque').value = livro.qnt_estque;
+            document.getElementById('autor').value = livro.autor;
+            document.getElementById('categoria').value = livro.categoria;
+            document.getElementById('btn-cancelar').style.display = 'inline-block';
+        }
+
+        // Limpa o formulário
+        function resetarFormulario() {
+            document.getElementById('form-title').innerText = 'Cadastrar Novo Livro';
+            document.getElementById('livro-id').value = '';
+            document.getElementById('livro-form').reset();
+            document.getElementById('btn-cancelar').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
