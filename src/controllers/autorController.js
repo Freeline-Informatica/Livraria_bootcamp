@@ -36,4 +36,39 @@ const listarAutores = async (req, res) => {
     }
 };
 
-module.exports = { criarAutor, listarAutores };
+const excluirAutor = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const autor = await pool.query(
+            'SELECT * FROM autores WHERE id = $1',
+            [id]
+        );
+
+        if (autor.rowCount === 0) {
+            return res.status(404).json({ erro: 'Autor não encontrado.' });
+        }
+
+        const livros = await pool.query(
+            'SELECT * FROM livros WHERE autor_id = $1',
+            [id]
+        );
+
+        if (livros.rowCount > 0) {
+            return res.status(400).json({
+                erro: 'Não é possível excluir o autor, pois existem livros associados a ele.'
+            });
+        }
+
+        await pool.query('DELETE FROM autores WHERE id = $1', [id]);
+
+        return res.status(200).json({ mensagem: 'Autor excluído com sucesso.' });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: 'Erro ao excluir autor.' });
+    }
+};
+
+
+module.exports = { criarAutor, listarAutores, excluirAutor };

@@ -36,4 +36,38 @@ const listarCategorias = async (req, res) => {
     }
 };
 
-module.exports = { criarCategoria, listarCategorias };
+const excluirCategoria = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const categoria = await pool.query(
+            'SELECT * FROM categorias WHERE id = $1',
+            [id]
+        );
+
+        if (categoria.rowCount === 0) {
+            return res.status(404).json({ erro: 'Categoria não encontrada.' });
+        }
+
+        const livros = await pool.query(
+            'SELECT * FROM livros WHERE categoria_id = $1',
+            [id]
+        );
+
+        if (livros.rowCount > 0) {
+            return res.status(400).json({
+                erro: 'Não é possível excluir a categoria, pois existem livros associados a ela.'
+            });
+        }
+
+        await pool.query('DELETE FROM categorias WHERE id = $1', [id]);
+
+        return res.status(200).json({ mensagem: 'Categoria excluída com sucesso.' });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ erro: 'Erro ao excluir categoria.' });
+    }
+};
+
+module.exports = { criarCategoria, listarCategorias, excluirCategoria };
