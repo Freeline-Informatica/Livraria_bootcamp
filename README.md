@@ -40,3 +40,10 @@ A API estará disponível em
 ```
 http://localhost:3000
 ```
+
+### Repositorio FrontEnd
+
+💡 **Aviso Importante:** Este repositório contém apenas a **API (Back-end)** do projeto. 
+A interface visual completa, desenvolvida em Vue 3 e Tailwind CSS, encontra-se em um repositório dedicado.
+ 
+🔗 **[Clique aqui para acessar o repositório do Front-end](https://github.com/renato-chagas/Livraria_bootcamp-front)**
