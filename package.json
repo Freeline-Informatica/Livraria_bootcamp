@@ -1,0 +1,31 @@
+{
+  "name": "livraria_bootcamp",
+  "version": "1.0.0",
+  "description": "Modelo para o desenvolvimento do Projeto de Treino da empresa **Freeline Informática**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renato-chagas/Livraria_bootcamp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/renato-chagas/Livraria_bootcamp/issues"
+  },
+  "homepage": "https://github.com/renato-chagas/Livraria_bootcamp#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
