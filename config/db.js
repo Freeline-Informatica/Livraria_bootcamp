@@ -3,9 +3,9 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'postgres',
-  host: 'db',  // Deixe fixo como string para forçar o container do banco
+  host: 'db',  
   database: 'livrariasabitirucs',
-  password: process.env.DB_PASSWORD, // Pode manter este
+  password: process.env.DB_PASSWORD, 
   port: 5432
 });
 
