@@ -1,120 +1,42 @@
-# 📚 Livraria Sabitiruc's - Backend
+## 🚀 Instalação
 
-API REST desenvolvida em **Node.js** para o gerenciamento de livros, autores e categorias da Livraria Sabitiruc's.
-
-## 🚀 Tecnologias
-
-* Node.js
-* Express
-* PostgreSQL
-* Docker
-* Docker Compose
-
-## ✨ Funcionalidades
-
-* Cadastro, edição e remoção de livros
-* Cadastro e gerenciamento de autores
-* Cadastro e gerenciamento de categorias
-* Pesquisa por título e ISBN
-* Filtro por autor e categoria
-* Validação dos dados
-* Persistência em PostgreSQL
-
-## 📋 Requisitos
-
-* Docker e Docker Compose
-
-ou
-
-* Node.js 20+
-* PostgreSQL
-
-## ⚙️ Configuração
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-PORT=3000
-
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=livraria
-DB_USER=postgres
-DB_PASSWORD=postgres
-```
-
-## ▶️ Executando com Docker
+### 1. Clone o repositório
 
 ```bash
-docker compose up --build
+git clone <url-do-backend>
+cd backend
 ```
 
-A API estará disponível em:
+### 2. Instale as dependências
+
+```bash
+npm install
+```
+
+### 3. Configure as variáveis de ambiente
+
+Copie o arquivo `.env.example` para `.env`.
+
+```bash
+cp .env.example .env
+```
+
+ou crie manualmente um arquivo `.env` utilizando o conteúdo do `.env.example`.
+
+### 4. Inicie o banco de dados
+
+```bash
+docker compose up -d
+```
+
+### 5. Execute o servidor
+
+```bash
+npm run dev
+```
+
+A API estará disponível em
 
 ```
 http://localhost:3000
 ```
-
-## 💻 Executando localmente
-
-```bash
-npm install
-npm run dev
-```
-
-## 📁 Estrutura
-
-```text
-src/
-├── config/
-├── controllers/
-├── routes/
-├── server.js
-```
-
-## 📚 Endpoints
-
-### Livros
-
-| Método | Endpoint    |
-| ------ | ----------- |
-| GET    | /livros     |
-| GET    | /livros/:id |
-| POST   | /livros     |
-| PUT    | /livros/:id |
-| DELETE | /livros/:id |
-
-### Autores
-
-| Método | Endpoint     |
-| ------ | ------------ |
-| GET    | /autores     |
-| GET    | /autores/:id |
-| POST   | /autores     |
-| DELETE | /autores/:id |
-
-### Categorias
-
-| Método | Endpoint        |http://localhost:5173/livros
-| ------ | --------------- |
-| GET    | /categorias     |
-| GET    | /categorias/:id |
-| POST   | /categorias     |
-| DELETE | /categorias/:id |http://localhost:5173/livros
-
-## ✅ Regras de Negócio
-
-* ISBN único
-* Campos obrigatórios
-* Preço maior que zero
-* Estoque não negativo
-* Todo livro deve possuir um autor
-* Todo livro deve possuir uma categoria
-
-## 🗄️ Banco de Dados
-
-O projeto utiliza PostgreSQL para armazenar todas as informações da aplicação.
-
-## 👨‍💻 Autor
-
-**Renato Chagas de Moraes**
