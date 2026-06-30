@@ -5,8 +5,8 @@ const livroController = require('../controllers/livroController');
 router.post('/', livroController.criarLivro);
 router.get('/', livroController.listarLivros);
 router.put('/:id', livroController.atualizarLivro);
-router.put('/:id', livroController.excluirLivro);
-router.delete('/:id', livroController.inativarLivro);
+router.delete('/:id', livroController.excluirLivro);
+router.put('/:id/inativar', livroController.inativarLivro);
 router.patch('/:id/reativar', livroController.reativarLivro);
 
 module.exports = router;
