@@ -181,6 +181,12 @@ Caso o projeto continue sendo desenvolvido, algumas melhorias podem ser implemen
 
 ---
 
+## Observação
+
+Não foi utilizado Vue 3 neste projeto, pois ainda estou em processo de aprendizado do framework. Considerando o prazo para a entrega do desafio, optei por desenvolver a solução com tecnologias que domino melhor, garantindo a conclusão e o funcionamento da aplicação.
+
+---
+
 # Considerações finais
 
 O desenvolvimento foi realizado procurando validar cada etapa antes de iniciar a próxima.
