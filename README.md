@@ -564,3 +564,13 @@ O participante deverá entregar o que foi concluído dentro do prazo, mesmo que 
 Funcionalidades incompletas deverão ser informadas no `README.md`.
 
 Será melhor avaliada uma aplicação simples, funcional e bem organizada do que uma aplicação com muitas funcionalidades incompletas ou instáveis.
+
+---
+
+# Projeto de Treino — Livraria Sabitiruc's
+
+## Documentação da solução
+
+A documentação do projeto desenvolvido está disponível em:
+
+- [Documentação da Solução](DOCUMENTACAO.md)

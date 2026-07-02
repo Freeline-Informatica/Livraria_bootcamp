@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Listagem - Sistema de Livraria</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>Livros do Sistema</h1>
+
+			<div style="margin-bottom: 20px">
+				<a
+					href="/"
+					class="btn-salvar"
+					style="text-decoration: none; display: inline-block"
+					>+ Cadastrar Novo Livro</a
+				>
+			</div>
+
+			<div class="card">
+				<h2>Livros Cadastrados</h2>
+				<div class="table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Título</th>
+								<th>ISBN</th>
+								<th>Preço</th>
+								<th>Estoque</th>
+								<th>Ações</th>
+							</tr>
+						</thead>
+						<tbody id="tabela-livros"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			const API_URL = "http://localhost:3000/livros";
+
+			document.addEventListener("DOMContentLoaded", listarLivros);
+
+			async function listarLivros() {
+				try {
+					const res = await fetch(API_URL);
+					const livros = await res.json();
+					const tabela = document.getElementById("tabela-livros");
+					tabela.innerHTML = "";
+
+					livros.forEach((livro) => {
+						const tr = document.createElement("tr");
+
+						tr.innerHTML = `
+                    <td><strong>${livro.titulo}</strong></td>
+                    <td>${livro.isbn}</td>
+                    <td>R$ ${Number(livro.preco).toFixed(2)}</td>
+                    <td>${livro.qnt_estque} un</td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Excluir</button>
+                    </td>
+                `;
+
+						tr.querySelector(".btn-edit").addEventListener(
+							"click",
+							() => {
+								irParaEdicao(livro);
+							},
+						);
+
+						tr.querySelector(".btn-delete").addEventListener(
+							"click",
+							() => {
+								deletarLivro(livro.id_livros);
+							},
+						);
+
+						tabela.appendChild(tr);
+					});
+				} catch (error) {
+					alert("Erro ao buscar livros da API.");
+				}
+			}
+
+			function irParaEdicao(livro) {
+				localStorage.setItem("livro_edicao", JSON.stringify(livro));
+				window.location.href = "/editar";
+			}
+
+			async function deletarLivro(id) {
+				if (!confirm("Deseja realmente excluir este livro?")) return;
+				try {
+					const res = await fetch(`${API_URL}/${id}`, {
+						method: "DELETE",
+					});
+					if (res.ok) {
+						alert("Livro deletado com sucesso!");
+						listarLivros();
+					} else {
+						alert("Erro ao deletar.");
+					}
+				} catch (error) {
+					alert("Erro ao deletar livro.");
+				}
+			}
+		</script>
+	</body>
+</html>
