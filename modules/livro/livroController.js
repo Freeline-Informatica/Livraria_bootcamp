@@ -11,6 +11,22 @@ const LivroController = {
         }
     },
 
+    buscarPorId: async(req, res) => {
+        try {
+            const { id } = req.params;
+            const livro = await LivroModel.buscarPorId(id); 
+
+            if (!livro) {
+                return res.status(404).json({ erro: "Livro não encontrado." });
+            }
+
+            res.json(livro);
+        } catch(erro) {
+            console.error(erro);
+            res.status(500).json({ erro: "Erro ao buscar os detalhes do livro." });
+        }
+    },
+
     cadastrarLivro: async(req, res) => {
         const { titulo, isbn, preco, qnt_estque, autor, categoria } = req.body;
 
@@ -18,7 +34,11 @@ const LivroController = {
             return res.status(400).json({erro: "Todos os campos são obrigatorios."});
         }
 
-        if(Number(preco) <= 0) {
+        if (Number(preco) <= 0) {
+            return res.status(400).json({erro: "O preço do livro deverá ser maior que zero."});
+        }
+
+        if(Number(qnt_estque) <= 0) {
             return res.status(400).json({erro: "A quantidade em estoque não poderá ser negativa"});
         }
 
@@ -39,31 +59,31 @@ const LivroController = {
         const { titulo, isbn, preco, qnt_estque, autor, categoria } = req.body;
 
         if (!titulo || !isbn || !preco || !qnt_estque || !autor || !categoria) {
-            return res.status(400).json({ erro: "Todos os campos são obrigatórios." });
+            return res.status(400).json({erro: "Todos os campos são obrigatórios."});
         }
         
         if (Number(preco) <= 0) {
-            return res.status(400).json({ erro: "O preço do livro deverá ser maior que zero." });
+            return res.status(400).json({erro: "O preço do livro deverá ser maior que zero."});
         }
         
         if (Number(qnt_estque) < 0) {
-            return res.status(400).json({ erro: "A quantidade em estoque não poderá ser negativa." });
+            return res.status(400).json({erro: "A quantidade em estoque não poderá ser negativa."});
         }
 
         try {
             const livroAtualizado = await LivroModel.atualizar(id, titulo, isbn, preco, qnt_estque, autor, categoria);
             
             if (!livroAtualizado) {
-                return res.status(404).json({ erro: "Livro não encontrado." });
+                return res.status(404).json({erro: "Livro não encontrado."});
             }
 
-            res.json({ mensagem: "Livro atualizado com sucesso!", livro: livroAtualizado });
+            res.json({mensagem: "Livro atualizado com sucesso!", livro: livroAtualizado});
         } catch (erro) {
             console.error(erro);
             if (erro.code === '23505') {
-                return res.status(400).json({ erro: "ISBN já cadastrado." });
+                return res.status(400).json({erro: "ISBN já cadastrado."});
             }
-            res.status(500).json({ erro: "Erro ao atualizar o livro." });
+            res.status(500).json({erro: "Erro ao atualizar o livro."});
         }
     },
 

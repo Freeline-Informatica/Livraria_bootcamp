@@ -19,6 +19,23 @@ const LivroModel = {
         return resultado.rows;
     },
 
+    buscarPorId: async(id_livros) => {
+        const queryTexto = `
+            select
+                id_livros,
+                titulo,
+                isbn,
+                preco,
+                qnt_estque,
+                autor,      
+                categoria  
+            from livros
+            where id_livros = $1
+        `;
+        const resultado = await db.query(queryTexto, [id_livros]);
+        return resultado.rows[0]; 
+    },
+
     criar: async(titulo, isbn, preco, qnt_estque, autor, categoria) => {
         const queryTexto = `
             insert into livros (titulo, isbn, preco, qnt_estque, autor, categoria)

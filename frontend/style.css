@@ -79,12 +79,13 @@ button {
     transition: 0.2s;
 }
 
-#btn-salvar {
+#btn-salvar, .btn-salvar { 
     background-color: #2ecc71;
     color: white;
+    text-align: center;
 }
 
-#btn-salvar:hover { 
+#btn-salvar:hover, .btn-salvar:hover { 
     background-color: #27ae60; 
 }
 
@@ -92,6 +93,20 @@ button {
     background-color: #95a5a6;
     color: white;
     margin-left: 10px;
+}
+
+.btn-link {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    display: inline-block;
+    transition: 0.2s;
+}
+
+.btn-link:hover {
+    color: #2980b9;
+    text-decoration: underline;
 }
 
 table {
@@ -102,7 +117,7 @@ table {
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid edge #ecf0f1;
+    border-bottom: 1px solid #ecf0f1; 
 }
 
 td:last-child {
@@ -121,8 +136,6 @@ th {
 .btn-edit {
     background-color: #3498db;
     color: white;
-    padding: 6px 12px;
-    font-size: 0.85rem;
 }
 .btn-edit:hover { 
     background-color: #2980b9; 
@@ -131,15 +144,13 @@ th {
 .btn-delete {
     background-color: #e74c3c;
     color: white;
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    margin-left: 5px;
 }
 .btn-delete:hover { 
     background-color: #c0392b; 
 }
 
-.btn-edit, .btn-delete, #btn-salvar, #btn-cancelar {
+
+.btn-edit, .btn-delete, #btn-salvar, #btn-cancelar, .btn-salvar { 
     padding: 6px 12px;
     border: none;
     border-radius: 4px;
@@ -149,13 +160,23 @@ th {
     font-size: 14px;
 }
 
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+}
+
 /* RESPONSIVIDADE */
 
-
 @media (max-width: 768px) {
+    body {
+        padding: 20px 10px; 
+    }
+
     .container {
         width: 100%;
-        padding: 10px; 
+        padding: 0; 
     }
 
     .form-row {
@@ -163,21 +184,15 @@ th {
         gap: 10px;
     }
 
-    #btn-salvar, #btn-cancelar {
+    #btn-salvar, #btn-cancelar, .btn-salvar {
         width: 100%;
         padding: 12px; 
         margin-top: 10px;
+        margin-left: 0; 
     }
-    
     
     td:last-child {
         flex-direction: row; 
         justify-content: center;
     }
-}
-
-.table-responsive {
-    width: 100%;
-    overflow-x: auto; 
-    -webkit-overflow-scrolling: touch;
 }

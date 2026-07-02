@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Editar Livro - Sistema de Livraria</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>Gerenciamento de Livraria</h1>
+
+			<div style="margin-bottom: 20px">
+				<a href="/lista" class="btn-link">← Voltar para a Listagem</a>
+			</div>
+
+			<div class="card">
+				<h2>Editar Livro</h2>
+				<form id="livro-form">
+					<input type="hidden" id="livro-id" />
+
+					<div class="form-group">
+						<label>Título:</label>
+						<input type="text" id="titulo" required />
+					</div>
+
+					<div class="form-row">
+						<div class="form-group">
+							<label>ISBN:</label>
+							<input type="text" id="isbn" required />
+						</div>
+						<div class="form-group">
+							<label>Preço (R$):</label>
+							<input
+								type="number"
+								id="preco"
+								step="0.01"
+								required
+							/>
+						</div>
+						<div class="form-group">
+							<label>Estoque:</label>
+							<input type="number" id="qnt_estque" required />
+						</div>
+					</div>
+
+					<div class="form-row">
+						<div class="form-group">
+							<label>Autor:</label>
+							<select id="autor" required>
+								<option value="1">Brandon Sanderson</option>
+								<option value="2">Sarah J. Mass</option>
+								<option value="3">Robin Hobb</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>Categoria:</label>
+							<select id="categoria" required>
+								<option value="1">Fantasia</option>
+								<option value="2">Romance</option>
+								<option value="3">Terror</option>
+							</select>
+						</div>
+					</div>
+
+					<button type="submit" id="btn-salvar">
+						Salvar Alterações
+					</button>
+					<button
+						type="button"
+						id="btn-cancelar"
+						onclick="window.location.href = '/lista'"
+					>
+						Cancelar
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<script>
+			const API_URL = "http://localhost:3000/livros";
+
+			document.addEventListener("DOMContentLoaded", () => {
+				const livro = JSON.parse(localStorage.getItem("livro_edicao"));
+
+				if (!livro) {
+					alert("Nenhum livro selecionado para edição.");
+					window.location.href = "/lista";
+					return;
+				}
+
+				document.getElementById("livro-id").value = livro.id_livros;
+
+				document.getElementById("titulo").value = livro.titulo || "";
+				document.getElementById("isbn").value = livro.isbn || "";
+				document.getElementById("preco").value = livro.preco || 0;
+				document.getElementById("qnt_estque").value =
+					livro.qnt_estque || 0;
+
+				const mapearAutor = {
+					"Brandon Sanderson": "1",
+					"Sarah J. Mass": "2",
+					"Sarah J. Maas": "2",
+					"Robin Hobb": "3",
+				};
+				document.getElementById("autor").value =
+					mapearAutor[livro.autor] || livro.autor || "1";
+
+				const mapearCategoria = {
+					Fantasia: "1",
+					Romance: "2",
+					Terror: "3",
+				};
+				document.getElementById("categoria").value =
+					mapearCategoria[livro.categoria] || livro.categoria || "1";
+			});
+
+			document
+				.getElementById("livro-form")
+				.addEventListener("submit", async (e) => {
+					e.preventDefault();
+
+					const id = document.getElementById("livro-id").value;
+
+					const dados = {
+						titulo: document.getElementById("titulo").value,
+						isbn: document.getElementById("isbn").value,
+						preco: parseFloat(
+							document.getElementById("preco").value,
+						),
+
+						qnt_estque: parseInt(
+							document.getElementById("qnt_estque").value,
+						),
+						qnt_estoque: parseInt(
+							document.getElementById("qnt_estque").value,
+						),
+
+						id_autor: parseInt(
+							document.getElementById("autor").value,
+						),
+						id_categoria: parseInt(
+							document.getElementById("categoria").value,
+						),
+
+						autor: parseInt(document.getElementById("autor").value),
+						categoria: parseInt(
+							document.getElementById("categoria").value,
+						),
+					};
+
+					try {
+						const res = await fetch(`${API_URL}/${id}`, {
+							method: "PUT",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify(dados),
+						});
+
+						if (res.ok) {
+							alert("Livro atualizado com sucesso!");
+							localStorage.removeItem("livro_edicao"); 
+							window.location.href = "/lista";
+						} else {
+							console.error(
+								"Servidor respondeu com status:",
+								res.status,
+							);
+							alert("Erro ao atualizar o livro.");
+						}
+					} catch (error) {
+						console.error("Erro na requisição:", error);
+						alert("Erro ao conectar com o servidor.");
+					}
+				});
+		</script>
+	</body>
+</html>
